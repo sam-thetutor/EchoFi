@@ -96,7 +96,7 @@ export default function LandingPage() {
                 <Button className="relative overflow-hidden group">
                   <span className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-purple-600 group-hover:from-cyan-400 group-hover:to-purple-500 transition-all duration-300"></span>
                  
-                  <Link href="#">
+                  <Link href="dashboard">
                   <span className="relative flex items-center">
                     <Wallet className="mr-2 h-4 w-4" />
                     Connect Wallet
@@ -144,7 +144,7 @@ export default function LandingPage() {
                     Get Rewarded for Quality Social Content
                   </h1>
                   <p className="max-w-5xl text-purple-100 md:text-xl">
-                    StellarRewards is a SocialFi platform that rewards users for creating engaging content about
+                    EchoFi is a SocialFi platform that rewards users for creating engaging content about
                     blockchain projects on Twitter.
                   </p>
                 </div>

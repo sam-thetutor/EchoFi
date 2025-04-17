@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import { useState } from "react"
 import Link from "next/link"
 import {
@@ -44,9 +45,28 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog"
+import { Label } from "@/components/ui/label"
 
 export default function DashboardPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [selectedCampaign, setSelectedCampaign] = useState<{name: string, token: string} | null>(null)
+  const [twitterLink, setTwitterLink] = useState("")
+
+  const handleSubmitPost = () => {
+    // Here you would handle the submission logic
+    console.log(`Submitting post for ${selectedCampaign?.name}:`, twitterLink)
+    setIsModalOpen(false)
+    setTwitterLink("")
+  }
 
   return (
     <SidebarProvider>
@@ -54,8 +74,9 @@ export default function DashboardPage() {
         <Sidebar>
           <SidebarHeader>
             <div className="flex items-center gap-2 px-2">
-              <Rocket className="h-6 w-6 text-purple-600" />
-              <span className="text-xl font-bold">StellarRewards</span>
+              {/* <Rocket className="h-6 w-6 text-purple-600" /> */}
+              <Image src="/logo.png" alt="EchoFi" width={86} height={64} />
+              {/* <span className="text-xl font-bold">EchoFi</span> */}
             </div>
           </SidebarHeader>
           <SidebarContent>
@@ -189,7 +210,7 @@ export default function DashboardPage() {
                     <Award className="h-4 w-4 text-muted-foreground" />
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">5,240 STELLA</div>
+                    <div className="text-2xl font-bold">5,240 XLM</div>
                     <p className="text-xs text-muted-foreground">+20% from last month</p>
                   </CardContent>
                 </Card>
@@ -232,14 +253,26 @@ export default function DashboardPage() {
                 </TabsList>
                 <TabsContent value="campaigns" className="space-y-4">
                   <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    {[1, 2, 3].map((i) => (
-                      <Card key={i}>
+                    {[{
+                      name:"EchoFi",
+                      token:"1000,000 ECHO",
+                      description:"Write a quality thread about our upcoming project launch"
+                    },{
+                      name:"Stella",
+                      token:"2500,000 XLM",
+                      description:"Create engaging content about our community fund campaign and earn rewards"
+                    },{
+                      name:"MunoPay",
+                      token:"500,000 MUP",
+                      description:"Post a meme about our latest feature collaboration with Stella and earn rewards"
+                    }].map((i,index) => (
+                      <Card key={index}>
                         <CardHeader className="pb-2">
                           <div className="flex items-center gap-4">
                             <div className="h-10 w-10 rounded-full bg-gradient-to-r from-purple-500 to-cyan-500" />
                             <div>
-                              <CardTitle>Project {i}</CardTitle>
-                              <CardDescription>10,000 STELLA tokens</CardDescription>
+                              <CardTitle>{i.name}</CardTitle>
+                              <CardDescription>{i.token}</CardDescription>
                             </div>
                           </div>
                         </CardHeader>
@@ -247,13 +280,20 @@ export default function DashboardPage() {
                           <div className="space-y-2">
                             <div className="flex justify-between text-sm">
                               <span className="text-muted-foreground">Progress</span>
-                              <span className="font-medium">{25 * i}%</span>
+                              <span className="font-medium">{25 * index}%</span>
                             </div>
-                            <Progress value={25 * i} className="h-2" />
+                            <Progress value={25 * index} className="h-2" />
                           </div>
                         </CardContent>
                         <CardFooter>
-                          <Button size="sm" className="w-full bg-purple-600 hover:bg-purple-700">
+                          <Button 
+                            size="sm" 
+                            className="w-full bg-purple-600 hover:bg-purple-700"
+                            onClick={() => {
+                              setSelectedCampaign(i)
+                              setIsModalOpen(true)
+                            }}
+                          >
                             Create Post
                           </Button>
                         </CardFooter>
@@ -320,6 +360,42 @@ export default function DashboardPage() {
           </main>
         </div>
       </div>
+
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Submit Twitter Post</DialogTitle>
+            <DialogDescription>
+              Please paste the link to your Twitter post for the {selectedCampaign?.name} campaign.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="twitter-link">Twitter Post URL</Label>
+              <Input
+                id="twitter-link"
+                placeholder="https://twitter.com/johndoe/status/..."
+                value={twitterLink}
+                onChange={(e) => setTwitterLink(e.target.value)}
+              />
+            </div>
+            {/* <div className="text-sm text-muted-foreground">
+              Reward: {selectedCampaign?.token/100}
+            </div> */}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleSubmitPost}
+              disabled={!twitterLink.includes("twitter.com")}
+            >
+              Submit Post
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </SidebarProvider>
   )
 }
